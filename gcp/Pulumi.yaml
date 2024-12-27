@@ -1,0 +1,7 @@
+name: gcp
+runtime: nodejs
+description: GCP infra deploy for Lamar
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: gcp-typescript

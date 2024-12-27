@@ -1,0 +1,7 @@
+name: aws
+runtime: nodejs
+description: AWS infra deploy for Lamar
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript
