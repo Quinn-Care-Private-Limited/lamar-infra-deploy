@@ -1,10 +1,9 @@
-import * as pulumi from "@pulumi/pulumi";
-import * as gcp from "@pulumi/gcp";
+import { vpcNetwork, subnetwork1, subnetwork2 } from "./vpc";
+import { filestore } from "./filestore";
+import { ffmpegWorker } from "./cloudrun/ffmpeg-worker";
 
-// Create a GCP resource (Storage Bucket)
-const bucket = new gcp.storage.Bucket("my-bucket", {
-    location: "US"
-});
-
-// Export the DNS name of the bucket
-export const bucketName = bucket.url;
+export const vpcNetworkId = vpcNetwork.id;
+export const subnetwork1Id = subnetwork1.id;
+export const subnetwork2Id = subnetwork2.id;
+export const filestoreId = filestore.id;
+export const ffmpegWorkerId = ffmpegWorker.id;
