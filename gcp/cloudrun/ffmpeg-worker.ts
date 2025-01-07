@@ -41,7 +41,7 @@ export const ffmpegWorker = new gcp.cloudrunv2.Service("ffmpeg-worker", {
         envs: env,
         resources: {
           limits: {
-            cpu: "6000m",
+            cpu: "6",
             memory: "4Gi",
           },
         },

@@ -41,8 +41,8 @@ export const storageWorker = new gcp.cloudrunv2.Service("storage-worker", {
         envs: env,
         resources: {
           limits: {
-            cpu: "6000m",
-            memory: "4Gi",
+            cpu: "1",
+            memory: "2Gi",
           },
         },
         volumeMounts: [
