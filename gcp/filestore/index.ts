@@ -1,9 +1,15 @@
 import * as gcp from "@pulumi/gcp";
 import { vpcNetwork } from "../vpc";
 
+import * as pulumi from "@pulumi/pulumi";
+
+// Step 1: Define configuration values
+const config = new pulumi.Config();
+const region = config.require("region");
+
 export const filestore = new gcp.filestore.Instance("ffmpeg-worker-fs", {
   tier: "BASIC_HDD",
-  location: "us-central1-a",
+  location: `${region}-a`,
   networks: [
     {
       network: vpcNetwork.id,
