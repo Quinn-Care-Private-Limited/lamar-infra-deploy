@@ -7,12 +7,12 @@ import * as pulumi from "@pulumi/pulumi";
 const config = new pulumi.Config();
 const region = config.require("region");
 
-export const filestore = new gcp.filestore.Instance("ffmpeg-worker-fs", {
+export const filestore = new gcp.filestore.Instance("lamar-fs", {
   tier: "BASIC_HDD",
   location: `${region}-a`,
   networks: [
     {
-      network: vpcNetwork.id,
+      network: vpcNetwork.name,
       modes: ["MODE_IPV4"],
     },
   ],

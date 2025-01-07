@@ -1,6 +1,0 @@
-encryptionsalt: abc
-config:
-  gcp:credentials: '{}'
-  gcp:dbPassword: Test123
-  gcp:project: lamar-445707
-  gcp:region: us-central1

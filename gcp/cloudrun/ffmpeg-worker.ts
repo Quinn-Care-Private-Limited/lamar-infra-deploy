@@ -1,6 +1,7 @@
 import * as gcp from "@pulumi/gcp";
 import { subnetwork2, vpcNetwork } from "../vpc";
 import { filestore } from "../filestore";
+import { env } from "./env";
 
 // Create the Cloud Run service
 export const ffmpegWorker = new gcp.cloudrunv2.Service("ffmpeg-worker", {
@@ -37,13 +38,7 @@ export const ffmpegWorker = new gcp.cloudrunv2.Service("ffmpeg-worker", {
           containerPort: 8080,
         },
 
-        envs: [
-          { name: "NODE_ENV", value: "production" },
-          { name: "FS_PATH", value: "/mnt/efs" },
-          { name: "CLIENT_ID", value: "QUINNCLIENTID" },
-          { name: "CLIENT_SECRET", value: "QUINNCLIENTSECRET" },
-          { name: "CLOUD_STORAGE", value: "GCS" },
-        ],
+        envs: env,
         resources: {
           limits: {
             cpu: "6000m",
@@ -95,9 +90,13 @@ const noauth = gcp.organizations.getIAMPolicy({
     },
   ],
 });
-const noauthIamPolicy = new gcp.cloudrun.IamPolicy("noauth", {
+const noauthIamPolicy = new gcp.cloudrun.IamPolicy("ffmpeg-worker-noauth", {
   location: ffmpegWorker.location,
   project: ffmpegWorker.project,
   service: ffmpegWorker.name,
   policyData: noauth.then((noauth) => noauth.policyData),
 });
+
+export const ffmpegWorkerServiceUrl = ffmpegWorker.urls.apply(
+  (urls) => urls[0]
+);

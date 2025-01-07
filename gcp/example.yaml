@@ -1,0 +1,12 @@
+config:
+  gcp:project: lamar-445707
+  gcp:region: us-central1
+  lamar:client_id: 1234567890
+  lamar:client_secret: 1234567890
+  lamar:gcp_credentials: '{}'
+  lamar:db_password: Test123
+  lamar:video_csm_server_url: http://urserverurl
+  lamar:video_csm_server_secret: secret
+  lamar:max_asset_processes: 1000
+  lamar:max_video_processes: 1000
+  lamar:lamar_public_key: publickey

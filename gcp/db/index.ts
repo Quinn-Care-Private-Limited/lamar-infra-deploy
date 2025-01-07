@@ -2,16 +2,19 @@ import * as gcp from "@pulumi/gcp";
 import * as pulumi from "@pulumi/pulumi";
 
 // Step 1: Define configuration values
-const config = new pulumi.Config();
-const region = config.require("region");
-const password = config.require("dbPassword");
+const gcpConfig = new pulumi.Config("gcp");
+const region = gcpConfig.require("region");
+
+const lamarConfig = new pulumi.Config("lamar");
+const password = lamarConfig.require("db_password");
 
 // Step 2: Create a Google Cloud SQL PostgreSQL instance
-export const postgresInstance = new gcp.sql.DatabaseInstance("lamar-instance", {
-  name: "lamar-instance",
+export const instance = new gcp.sql.DatabaseInstance("lamar-db-instance", {
+  name: "lamar-db-instance",
   databaseVersion: "POSTGRES_16", // Choose the desired PostgreSQL version
   region: region,
   instanceType: "CLOUD_SQL_INSTANCE", // Create a new instance
+  deletionProtection: false,
   settings: {
     edition: "ENTERPRISE",
     diskSize: 10,
@@ -32,12 +35,14 @@ export const postgresInstance = new gcp.sql.DatabaseInstance("lamar-instance", {
 // Step 3: Create a PostgreSQL database in the instance
 const database = new gcp.sql.Database("lamar-database", {
   name: "lamar",
-  instance: postgresInstance.name,
+  instance: instance.name,
 });
 
 // Step 4: Create a database user
 const dbUser = new gcp.sql.User("postgres-user", {
   name: "postgres",
-  instance: postgresInstance.name,
+  instance: instance.name,
   password,
 });
+
+export const dbUrl = pulumi.interpolate`postgresql://${dbUser.name}:${dbUser.password}@${instance.publicIpAddress}:5432/${database.name}?sslmode=verify-full&pool_timeout=0`;
