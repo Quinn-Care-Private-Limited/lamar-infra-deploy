@@ -23,12 +23,6 @@ export const subnetwork2 = new gcp.compute.Subnetwork("lamar-subnet-2", {
   network: vpcNetwork.id,
 });
 
-export const subnetwork3 = new gcp.compute.Subnetwork("lamar-subnet-3", {
-  ipCidrRange: "10.8.0.0/16",
-  region,
-  network: vpcNetwork.id,
-});
-
 export const firewallAllowHttp = new gcp.compute.Firewall(
   "lamar-firewall-allow-http",
   {

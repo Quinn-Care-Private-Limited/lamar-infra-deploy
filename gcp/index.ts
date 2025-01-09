@@ -1,5 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
-import { vpcNetwork, subnetwork1, subnetwork2, subnetwork3 } from "./vpc";
+import { vpcNetwork, subnetwork1, subnetwork2 } from "./vpc";
 import { filestore } from "./filestore";
 import { ffmpegWorker } from "./cloudrun/ffmpeg-worker";
 import { storageWorker } from "./cloudrun/storage-worker";
@@ -8,8 +8,8 @@ import { instance } from "./compute";
 
 export const vpcNetworkId = vpcNetwork.id;
 export const subnetworks = pulumi
-  .all([subnetwork1.id, subnetwork2.id, subnetwork3.id])
-  .apply(([a, b, c]) => [a, b, c]);
+  .all([subnetwork1.id, subnetwork2.id])
+  .apply(([a, b]) => [a, b]);
 export const filestoreId = filestore.id;
 export const ffmpegWorkerId = ffmpegWorker.id;
 export const storageWorkerId = storageWorker.id;
