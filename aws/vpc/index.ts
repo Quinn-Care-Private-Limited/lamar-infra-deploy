@@ -27,7 +27,7 @@ export const publicSubnet1 = new aws.ec2.Subnet("public-subnet-1", {
 
 export const publicSubnet2 = new aws.ec2.Subnet("public-subnet-2", {
   vpcId: vpc.id,
-  cidrBlock: "10.1.0.0/16",
+  cidrBlock: "10.0.192.0/18",
   mapPublicIpOnLaunch: true,
   availabilityZone: `${region}b`, // Adjust as needed
   tags: {
