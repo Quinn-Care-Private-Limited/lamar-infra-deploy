@@ -47,3 +47,23 @@ export const mountTarget2 = new aws.efs.MountTarget("mount-target-2", {
   subnetId: publicSubnet2.id,
   securityGroups: [efsSecurityGroup.id],
 });
+
+// EFS access point used by lambda file system
+export const lambdaAccessPoint = new aws.efs.AccessPoint(
+  "lambda-access-point",
+  {
+    fileSystemId: efs.id,
+    rootDirectory: {
+      path: "/",
+      creationInfo: {
+        ownerGid: 1000,
+        ownerUid: 1000,
+        permissions: "777",
+      },
+    },
+    posixUser: {
+      gid: 1000,
+      uid: 1000,
+    },
+  }
+);

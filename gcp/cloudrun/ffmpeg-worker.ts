@@ -1,11 +1,11 @@
 import * as gcp from "@pulumi/gcp";
 import { subnetwork2, vpcNetwork } from "../vpc";
 import { filestore } from "../filestore";
-import { env } from "./env";
+import { env, region, workerDockerImage } from "./env";
 
 // Create the Cloud Run service
 export const ffmpegWorker = new gcp.cloudrunv2.Service("ffmpeg-worker", {
-  location: "us-central1",
+  location: region,
   ingress: "INGRESS_TRAFFIC_ALL",
   deletionProtection: false,
   template: {
@@ -32,7 +32,7 @@ export const ffmpegWorker = new gcp.cloudrunv2.Service("ffmpeg-worker", {
     containers: [
       {
         name: "ffmpeg-worker-1",
-        image: "quinninc/ffmpeg-worker:latest",
+        image: workerDockerImage,
         ports: {
           name: "http1",
           containerPort: 8080,

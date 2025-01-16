@@ -1,12 +1,12 @@
 config:
-  gcp:project: lamar-445707
-  gcp:region: us-central1
-  lamar:client_id: 1234567890
-  lamar:client_secret: 1234567890
-  lamar:gcp_credentials: '{}'
+  aws:region: us-east-2
+  lamar:aws_access_key_id: AKIA1234567890
+  lamar:aws_secret_access_key: 1234567890
   lamar:db_password: Test123
   lamar:video_csm_server_url: http://urserverurl
   lamar:video_csm_server_secret: secret
   lamar:max_asset_processes: 1000
   lamar:max_video_processes: 1000
   lamar:lamar_public_key: publickey
+  lamar:layer_arn: arn:aws:lambda:us-east-2:079464146245:layer:ffmpeg-vmaf:13
+  lamar:core_docker_image: quinninc/lamar-core:0.0.1

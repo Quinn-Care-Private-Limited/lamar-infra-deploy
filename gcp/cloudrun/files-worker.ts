@@ -4,7 +4,7 @@ import { filestore } from "../filestore";
 import { env, region, workerDockerImage } from "./env";
 
 // Create the Cloud Run service
-export const storageWorker = new gcp.cloudrunv2.Service("storage-worker", {
+export const filesWorker = new gcp.cloudrunv2.Service("files-worker", {
   location: region,
   ingress: "INGRESS_TRAFFIC_ALL",
   deletionProtection: false,
@@ -13,7 +13,7 @@ export const storageWorker = new gcp.cloudrunv2.Service("storage-worker", {
       "run.googleapis.com/cpu-throttling": "true",
       "run.googleapis.com/startup-cpu-boost": "true",
     },
-    timeout: "900s",
+    timeout: "100s",
     maxInstanceRequestConcurrency: 1,
     scaling: {
       minInstanceCount: 0,
@@ -31,7 +31,7 @@ export const storageWorker = new gcp.cloudrunv2.Service("storage-worker", {
     },
     containers: [
       {
-        name: "storage-worker-1",
+        name: "files-worker-1",
         image: workerDockerImage,
         ports: {
           name: "http1",
@@ -41,8 +41,8 @@ export const storageWorker = new gcp.cloudrunv2.Service("storage-worker", {
         envs: env,
         resources: {
           limits: {
-            cpu: "1",
-            memory: "2Gi",
+            cpu: "0.5",
+            memory: "1Gi",
           },
         },
         volumeMounts: [
@@ -90,13 +90,11 @@ const noauth = gcp.organizations.getIAMPolicy({
     },
   ],
 });
-const noauthIamPolicy = new gcp.cloudrun.IamPolicy("storage-worker-noauth", {
-  location: storageWorker.location,
-  project: storageWorker.project,
-  service: storageWorker.name,
+const noauthIamPolicy = new gcp.cloudrun.IamPolicy("files-worker-noauth", {
+  location: filesWorker.location,
+  project: filesWorker.project,
+  service: filesWorker.name,
   policyData: noauth.then((noauth) => noauth.policyData),
 });
 
-export const storageWorkerServiceUrl = storageWorker.urls.apply(
-  (urls) => urls[0]
-);
+export const filesWorkerServiceUrl = filesWorker.urls.apply((urls) => urls[0]);

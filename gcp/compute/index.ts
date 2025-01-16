@@ -3,12 +3,14 @@ import * as pulumi from "@pulumi/pulumi";
 import { dbUrl } from "../db";
 import { ffmpegWorkerServiceUrl } from "../cloudrun/ffmpeg-worker";
 import { storageWorkerServiceUrl } from "../cloudrun/storage-worker";
+import { filesWorkerServiceUrl } from "../cloudrun/files-worker";
 import { subnetwork1 } from "../vpc";
 
-const lamarConfig = new pulumi.Config("lamar");
+const gcpConfig = new pulumi.Config("gcp");
+const region = gcpConfig.require("region");
 
-const clientId = lamarConfig.require("client_id");
-const clientSecret = lamarConfig.require("client_secret");
+const lamarConfig = new pulumi.Config("lamar");
+const dockerImage = lamarConfig.require("core_docker_image");
 const videoCsmServerUrl = lamarConfig.get("video_csm_server_url") || "";
 const videoCsmServerSecret = lamarConfig.get("video_csm_server_secret") || "";
 const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
@@ -18,16 +20,12 @@ const lamarPublicKey = lamarConfig.require("lamar_public_key");
 const containerDeclaration = pulumi.interpolate`spec:
   containers:
   - name: lamar-core
-    image: quinninc/lamar-core:latest
+    image: ${dockerImage}
     env:
     - name: NODE_ENV
       value: production
     - name: PORT
-      value: '80'
-    - name: CLIENT_ID
-      value: ${clientId}
-    - name: CLIENT_SECRET
-      value: ${clientSecret}
+      value: 80
     - name: DB_URL
       value: ${dbUrl}
     - name: VIDEO_CSM_SERVER_URL
@@ -44,6 +42,8 @@ const containerDeclaration = pulumi.interpolate`spec:
       value: ${ffmpegWorkerServiceUrl}
     - name: STORAGE_WORKER_URL
       value: ${storageWorkerServiceUrl}
+    - name: FILES_WORKER_URL
+      value: ${filesWorkerServiceUrl}
     securityContext:
       privileged: true
     stdin: false
@@ -58,7 +58,7 @@ const _default = new gcp.serviceaccount.Account("lamar-core-sa", {
 // Define the Google Compute Engine instance
 export const instance = new gcp.compute.Instance("lamar-core-instance", {
   name: "larmar-core",
-  zone: "us-central1-a",
+  zone: `${region}-a`,
   machineType: "e2-small",
   bootDisk: {
     autoDelete: true,
