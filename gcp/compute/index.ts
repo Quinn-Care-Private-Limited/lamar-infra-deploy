@@ -17,15 +17,18 @@ const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
 const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
 
+// Reserve a static IP address
+const staticIp = new gcp.compute.Address("lamar-instance-static-ip", {
+  region, // Ensure the region matches the instance
+});
+
 const containerDeclaration = pulumi.interpolate`spec:
   containers:
   - name: lamar-core
     image: ${dockerImage}
     env:
-    - name: NODE_ENV
-      value: production
-    - name: PORT
-      value: 80
+    - name: HOST
+      value: http://${staticIp.address}
     - name: DB_URL
       value: ${dbUrl}
     - name: VIDEO_CSM_SERVER_URL
@@ -56,45 +59,52 @@ const _default = new gcp.serviceaccount.Account("lamar-core-sa", {
 });
 
 // Define the Google Compute Engine instance
-export const instance = new gcp.compute.Instance("lamar-core-instance", {
-  name: "larmar-core",
-  zone: `${region}-a`,
-  machineType: "e2-small",
-  bootDisk: {
-    autoDelete: true,
-    deviceName: "lamar-core",
-    initializeParams: {
-      image: "projects/cos-cloud/global/images/cos-stable-117-18613-75-89",
-      size: 10,
-      type: "pd-balanced",
+export const instance = new gcp.compute.Instance(
+  "lamar-core-instance",
+  {
+    name: "larmar-core",
+    zone: `${region}-a`,
+    machineType: "e2-small",
+    bootDisk: {
+      autoDelete: true,
+      deviceName: "lamar-core",
+      initializeParams: {
+        image: "projects/cos-cloud/global/images/cos-stable-117-18613-75-89",
+        size: 10,
+        type: "pd-balanced",
+      },
+      mode: "READ_WRITE",
     },
-    mode: "READ_WRITE",
-  },
-  canIpForward: false,
-  deletionProtection: false,
-  enableDisplay: false,
-  labels: {
-    "container-vm": "cos-stable-117-18613-75-89",
-    "goog-ec-src": "vm_add-tf",
-  },
-  metadata: {
-    "gce-container-declaration": containerDeclaration,
-  },
-  networkInterfaces: [
-    {
-      accessConfigs: [
-        {
-          networkTier: "PREMIUM",
-        },
-      ],
-      queueCount: 0,
-      stackType: "IPV4_ONLY",
-      subnetwork: subnetwork1.id,
+    canIpForward: false,
+    deletionProtection: false,
+    enableDisplay: false,
+    labels: {
+      "container-vm": "cos-stable-117-18613-75-89",
+      "goog-ec-src": "vm_add-tf",
     },
-  ],
-  serviceAccount: {
-    email: _default.email,
-    scopes: ["cloud-platform"],
+    metadata: {
+      "gce-container-declaration": containerDeclaration,
+    },
+    networkInterfaces: [
+      {
+        accessConfigs: [
+          {
+            networkTier: "PREMIUM",
+            natIp: staticIp.address,
+          },
+        ],
+        queueCount: 0,
+        stackType: "IPV4_ONLY",
+        subnetwork: subnetwork1.id,
+      },
+    ],
+    serviceAccount: {
+      email: _default.email,
+      scopes: ["cloud-platform"],
+    },
+    tags: ["http-server"],
   },
-  tags: ["http-server"],
-});
+  {
+    replaceOnChanges: ["metadata"],
+  }
+);

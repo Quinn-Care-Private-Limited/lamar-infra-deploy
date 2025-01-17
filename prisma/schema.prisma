@@ -1,0 +1,195 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl", "rhel-openssl-3.0.x", "linux-arm64-openssl-1.0.x"]
+}
+
+enum AssetStatus {
+    PENDING
+    PROCESSING
+    READY
+    FAILED
+}
+
+model Source {
+    id        String   @id @default(cuid())
+    createdat DateTime @default(now())
+    updatedat DateTime @updatedAt
+    bucket    String
+    key       String
+    extension String
+    data      Json?
+    assets    Asset[]
+
+    @@unique([bucket, key, extension])
+}
+
+model Asset {
+    id         String      @id @default(cuid())
+    createdat  DateTime    @default(now())
+    updatedat  DateTime    @updatedAt
+    sources    Source[]
+    config     Json
+    data       Json?
+    status     AssetStatus @default(PENDING)
+    deleted    Boolean     @default(false)
+    VideoAsset VideoAsset?
+    ImageAsset ImageAsset?
+}
+
+model VideoAsset {
+    id           String        @id @default(cuid())
+    createdat    DateTime      @default(now())
+    updatedat    DateTime      @updatedAt
+    asset        Asset         @relation(fields: [assetid], references: [id], onDelete: Cascade)
+    assetid      String        @unique
+    streams      Stream[]
+    streamchunks StreamChunk[]
+}
+
+model ImageAsset {
+    id        String   @id @default(cuid())
+    createdat DateTime @default(now())
+    updatedat DateTime @updatedAt
+    asset     Asset    @relation(fields: [assetid], references: [id], onDelete: Cascade)
+    assetid   String   @unique
+}
+
+model Stream {
+    id            String        @id @default(cuid())
+    createdat     DateTime      @default(now())
+    updatedat     DateTime      @updatedAt
+    height        Int           @default(0)
+    width         Int           @default(0)
+    streamchunks  StreamChunk[]
+    qualitynumber Int
+    targetbitrate Int
+    bitrate       Int
+    asset         VideoAsset    @relation(fields: [assetid], references: [id], onDelete: Cascade)
+    assetid       String
+
+    @@unique([assetid, targetbitrate])
+    @@index([assetid, targetbitrate, qualitynumber])
+}
+
+model StreamChunk {
+    id            String     @id @default(cuid())
+    createdat     DateTime   @default(now())
+    updatedat     DateTime   @updatedAt
+    streamid      String
+    stream        Stream     @relation(fields: [streamid], references: [id], onDelete: Cascade)
+    chunknumber   Int
+    width         Int
+    height        Int
+    size          Int
+    avgbitrate    Int
+    duration      Float
+    relativescore Int
+    asset         VideoAsset @relation(fields: [assetid], references: [id], onDelete: Cascade)
+    assetid       String
+    path          String
+
+    @@unique([assetid, streamid, chunknumber])
+}
+
+model ProcessChunk {
+    id          String   @id @default(cuid())
+    createdat   DateTime @default(now())
+    updatedat   DateTime @updatedAt
+    assetid     String
+    chunknumber Int
+    inputpaths  Json
+    process     Json
+    assPath     String?
+    duration    Float
+
+    @@index([assetid])
+}
+
+model EncoderProcess {
+    id            String   @id @default(cuid())
+    createdat     DateTime @default(now())
+    updatedat     DateTime @updatedAt
+    processid     String
+    assetid       String
+    sourceid      String
+    targetbitrate Int
+    crf           Int
+    width         Int
+    height        Int
+    size          Int
+    avgbitrate    Int
+    relativescore Int
+    duration      Float
+    isSelected    Boolean
+
+    @@index([assetid, sourceid, processid])
+}
+
+model Event {
+    id        String   @id @default(cuid())
+    createdat DateTime @default(now())
+    updatedat DateTime @updatedAt
+    eventid   String
+    assetid   String
+    event     String
+    entityid  String
+    duration  Float?
+    data      Json
+
+    @@unique([eventid, assetid, event])
+}
+
+model MediaProcessorResponse {
+    id        String   @id @default(cuid())
+    createdat DateTime @default(now())
+    updatedat DateTime @updatedAt
+    assetid   String
+    entityid  String?
+    path      String
+    status    Int
+    duration  Int
+    data      Json?
+
+    @@index([assetid, path])
+}
+
+enum JobStatus {
+    PENDING
+    PROCESSING
+    COMPLETED
+    FAILED
+}
+
+model Job {
+    id          String    @id @default(cuid())
+    assetid     String
+    createdat   DateTime  @default(now())
+    updatedat   DateTime  @updatedAt
+    status      JobStatus @default(PENDING)
+    jobtype     String
+    data        Json
+    priority    Int
+    retries     Int       @default(0)
+    parentJobId String?
+    childJobIds String[]
+    prevJobIds  String[]
+
+    @@index([status, priority, assetid, parentJobId])
+}
+
+model WorkerQueue {
+    id        String   @id @default(cuid())
+    createdat DateTime @default(now())
+    updatedat DateTime @updatedAt
+    assetid   String
+    jobtype   String
+    data      Json
+    scheduled Boolean  @default(false)
+
+    @@index([jobtype, assetid])
+}

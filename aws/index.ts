@@ -3,7 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 // import { efs } from "./efs";
 // import { rdsInstance, dbUrl } from "./db";
 // import { ffmpegLambdaFunction } from "./lambda/ffmpeg";
-// import { ec2Instance } from "./ec2";
+import { ec2Instance, elasticIp } from "./ec2";
 
 // export const vpcNetworkId = vpc.id;
 // export const subnetworks = pulumi
@@ -13,4 +13,4 @@ import * as pulumi from "@pulumi/pulumi";
 // export const dbInstanceId = rdsInstance.id;
 // export const dbInstanceUrl = dbUrl;
 // export const ffmpegLambdaFunctionArn = ffmpegLambdaFunction.arn;
-// export const ec2Ip = ec2Instance.publicIp;
+export const ec2Ip = elasticIp.publicIp;
