@@ -4,7 +4,6 @@ config:
   lamar:gcp_credentials: '{}'
   lamar:db_password: Test123
   lamar:video_csm_server_url: http://urserverurl
-  lamar:video_csm_server_secret: secret
   lamar:max_asset_processes: 1000
   lamar:max_video_processes: 1000
   lamar:lamar_public_key: publickey

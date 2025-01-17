@@ -12,7 +12,6 @@ const region = gcpConfig.require("region");
 const lamarConfig = new pulumi.Config("lamar");
 const dockerImage = lamarConfig.require("core_docker_image");
 const videoCsmServerUrl = lamarConfig.get("video_csm_server_url") || "";
-const videoCsmServerSecret = lamarConfig.get("video_csm_server_secret") || "";
 const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
 const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
@@ -33,8 +32,6 @@ const containerDeclaration = pulumi.interpolate`spec:
       value: ${dbUrl}
     - name: VIDEO_CSM_SERVER_URL
       value: ${videoCsmServerUrl}
-    - name: VIDEO_CSM_SERVER_SECRET
-      value: ${videoCsmServerSecret}
     - name: MAX_ASSET_PROCESSES
       value: ${maxAssetProcesses}
     - name: MAX_VIDEO_PROCESSES
