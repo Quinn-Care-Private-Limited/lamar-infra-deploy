@@ -84,6 +84,7 @@ export const ec2Instance = new aws.ec2.Instance(
   },
   {
     replaceOnChanges: ["userData"],
+    deleteBeforeReplace: true,
   }
 );
 

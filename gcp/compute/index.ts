@@ -28,6 +28,8 @@ const containerDeclaration = pulumi.interpolate`spec:
     env:
     - name: HOST
       value: http://${staticIp.address}
+    - name: CLOUD_TYPE
+      value: gcp
     - name: DB_URL
       value: ${dbUrl}
     - name: VIDEO_CSM_SERVER_URL
@@ -103,5 +105,6 @@ export const instance = new gcp.compute.Instance(
   },
   {
     replaceOnChanges: ["metadata"],
+    deleteBeforeReplace: true,
   }
 );
