@@ -9,5 +9,5 @@ config:
   lamar:max_video_processes: 1000
   lamar:lamar_public_key: publickey
   lamar:layer_arn: arn:aws:lambda:us-east-2:079464146245:layer:ffmpeg-vmaf:13
-  lamar:core_docker_image: quinninc/lamar-core:0.0.1
+  lamar:lamar_core_version: 0.0.1
   lamar:ssh_key_name: test

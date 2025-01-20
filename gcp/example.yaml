@@ -1,7 +1,6 @@
 config:
   gcp:project: lamar-445707
   gcp:region: us-central1
-  lamar:gcp_credentials: '{}'
   lamar:db_password: Test123
   lamar:video_csm_server_url: http://urserverurl
   lamar:max_asset_processes: 1000
@@ -9,3 +8,4 @@ config:
   lamar:lamar_public_key: publickey
   lamar:core_docker_image: quinninc/lamar-core:0.0.1
   lamar:worker_docker_image: quinninc/ffmpeg-worker:latest
+  lamar:gcp_credentials: '{}'

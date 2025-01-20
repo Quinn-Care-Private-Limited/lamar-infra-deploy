@@ -1,7 +1,7 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import { publicSubnet1, vpc } from "../vpc";
-// import {dbUrl} from "../db"
+import { dbUrl } from "../db";
 
 const lamarConfig = new pulumi.Config("lamar");
 const videoCsmServerUrl = lamarConfig.get("video_csm_server_url") || "";
@@ -9,6 +9,7 @@ const videoCsmServerSecret = lamarConfig.get("video_csm_server_secret") || "";
 const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
 const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
+const lamarCoreVersion = lamarConfig.require("lamar_core_version");
 const sshKeyName = lamarConfig.require("ssh_key_name");
 
 // Allocate an Elastic IP
@@ -21,7 +22,7 @@ export const elasticIp = new aws.ec2.Eip("ec2-elastic-ip", {
 
 // Define Docker image and environment variables
 const startUpScript = pulumi.interpolate`#!/bin/bash
-curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/0.0.1/lamar-core
+curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/${lamarCoreVersion}/lamar-core
 curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/prisma/schema.prisma
 curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/prisma-binaries/libquery_engine-rhel-openssl-3.0.x.so.node
 chmod +x lamar-core
@@ -34,7 +35,7 @@ VIDEO_CSM_SERVER_URL=${videoCsmServerUrl} \
 VIDEO_CSM_SERVER_SECRET=${videoCsmServerSecret} \
 MAX_ASSET_PROCESSES=${maxAssetProcesses} \
 MAX_VIDEO_PROCESSES=${maxVideoProcesses} \
-DATABASE_URL='postgresql://postgres:R52j3xT7wu2H2cPrDX7CqnVZsV7ekJdiUq@35.223.213.37:5432/lamar?schema=public&sslmode=verify-full&pool_timeout=0'; \ 
+DATABASE_URL='${dbUrl}'; \ 
 ./lamar-core"
 `;
 
