@@ -30,7 +30,7 @@ const containerDeclaration = pulumi.interpolate`spec:
       value: http://${staticIp.address}
     - name: CLOUD_TYPE
       value: gcp
-    - name: DB_URL
+    - name: DATABASE_URL
       value: ${dbUrl}
     - name: VIDEO_CSM_SERVER_URL
       value: ${videoCsmServerUrl}
