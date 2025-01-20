@@ -58,4 +58,4 @@ export const rdsInstance = new aws.rds.Instance("lamar-db", {
   },
 });
 
-export const dbUrl = pulumi.interpolate`postgresql://${rdsInstance.username}:${rdsInstance.password}@${rdsInstance.endpoint}/${rdsInstance.dbName}?sslmode=require&pool_timeout=0`;
+export const dbUrl = pulumi.interpolate`postgresql://${rdsInstance.username}:${password}@${rdsInstance.endpoint}/${rdsInstance.dbName}?sslmode=require&pool_timeout=0`;

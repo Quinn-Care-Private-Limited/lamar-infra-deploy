@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "db:migrate": "rm -rf primsa/migrations && prisma migrate dev"
+  },
   "dependencies": {
+    "@prisma/client": "^6.2.1",
     "prisma": "^6.2.1"
   }
 }

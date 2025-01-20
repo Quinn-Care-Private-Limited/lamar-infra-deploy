@@ -17,7 +17,7 @@ const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
 
 // Reserve a static IP address
-const staticIp = new gcp.compute.Address("lamar-instance-static-ip", {
+export const staticIp = new gcp.compute.Address("lamar-instance-static-ip", {
   region, // Ensure the region matches the instance
 });
 

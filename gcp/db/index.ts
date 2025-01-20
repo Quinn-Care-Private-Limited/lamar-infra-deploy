@@ -24,6 +24,12 @@ export const instance = new gcp.sql.DatabaseInstance("lamar-db-instance", {
     deletionProtectionEnabled: false,
     ipConfiguration: {
       ipv4Enabled: true, // Enable public IP access (optional)
+      authorizedNetworks: [
+        {
+          name: "all-users",
+          value: "0.0.0.0/0", // Allow access from all IPs
+        },
+      ],
     },
     backupConfiguration: {
       enabled: true,
@@ -45,4 +51,4 @@ const dbUser = new gcp.sql.User("postgres-user", {
   password,
 });
 
-export const dbUrl = pulumi.interpolate`postgresql://${dbUser.name}:${dbUser.password}@${instance.publicIpAddress}:5432/${database.name}?sslmode=verify-full&pool_timeout=0`;
+export const dbUrl = pulumi.interpolate`postgresql://${dbUser.name}:${password}@${instance.publicIpAddress}:5432/${database.name}?sslmode=verify-full&pool_timeout=0`;

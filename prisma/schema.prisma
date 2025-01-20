@@ -16,14 +16,16 @@ enum AssetStatus {
 }
 
 model Source {
-    id        String   @id @default(cuid())
-    createdat DateTime @default(now())
-    updatedat DateTime @updatedAt
-    bucket    String
-    key       String
-    extension String
-    data      Json?
-    assets    Asset[]
+    id         String   @id @default(cuid())
+    createdat  DateTime @default(now())
+    updatedat  DateTime @updatedAt
+    bucket     String
+    key        String
+    extension  String
+    url        String?
+    downloaded Boolean?
+    data       Json?
+    assets     Asset[]
 
     @@unique([bucket, key, extension])
 }
