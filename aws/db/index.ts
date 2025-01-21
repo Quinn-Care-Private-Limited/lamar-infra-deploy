@@ -51,7 +51,7 @@ export const rdsInstance = new aws.rds.Instance("lamar-db", {
   vpcSecurityGroupIds: [rdsSecurityGroup.id],
   multiAz: false, // Set to true for Multi-AZ deployments
   storageType: "gp2",
-  publiclyAccessible: false, // Set to true if access is needed from the public internet
+  publiclyAccessible: true, // Set to true if access is needed from the public internet
   skipFinalSnapshot: true, // Set to false for production to retain final snapshots
   tags: {
     Name: "lamar-db",

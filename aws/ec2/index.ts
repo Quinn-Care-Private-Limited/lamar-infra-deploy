@@ -33,20 +33,20 @@ curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/prisma/sche
 curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/prisma-binaries/libquery_engine-rhel-openssl-3.0.x.so.node
 chmod +x lamar-core
 
-screen -dmS lamar-job bash -c \
-"HOST='http://${elasticIp.publicIp}' \
-CLOUD_TYPE=aws \
-VIDEO_CSM_SERVER_URL='${videoCsmServerUrl}' \
-MAX_ASSET_PROCESSES=${maxAssetProcesses} \
-MAX_VIDEO_PROCESSES=${maxVideoProcesses} \
-FFMPEG_WORKER_URL='${ffmpegWorkerArn}' \
-FILES_WORKER_URL='${filesWorkerArn}' \
-STORAGE_WORKER_URL='${storageWorkerArn}' \
-LAMAR_PUBLIC_KEY=${lamarPublicKey} \
-AWS_ACCESS_KEY_ID=${awsAccessKeyId} \
-AWS_SECRET_ACCESS_KEY=${awsSecretKey} \
-AWS_REGION=${region} \
-DATABASE_URL='${dbUrl}' \ 
+screen -L -Logfile log.txt -dmS lamar-job bash -c "\
+export HOST='http://${elasticIp.publicIp}' && \
+export CLOUD_TYPE=aws && \
+export VIDEO_CSM_SERVER_URL='${videoCsmServerUrl}' && \
+export MAX_ASSET_PROCESSES=${maxAssetProcesses} && \
+export MAX_VIDEO_PROCESSES=${maxVideoProcesses} && \
+export FFMPEG_WORKER_URL='${ffmpegWorkerArn}' && \
+export FILES_WORKER_URL='${filesWorkerArn}' && \
+export STORAGE_WORKER_URL='${storageWorkerArn}' && \
+export LAMAR_PUBLIC_KEY=${lamarPublicKey} && \
+export AWS_ACCESS_KEY_ID=${awsAccessKeyId} && \
+export AWS_SECRET_ACCESS_KEY=${awsSecretKey} && \
+export AWS_REGION=${region} && \
+export DATABASE_URL='${dbUrl}' && \ 
 ./lamar-core"
 `;
 
