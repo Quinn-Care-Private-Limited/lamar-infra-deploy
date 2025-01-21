@@ -6,7 +6,7 @@ import { env, region, workerDockerImage } from "./env";
 // Create the Cloud Run service
 export const storageWorker = new gcp.cloudrunv2.Service("storage-worker", {
   location: region,
-  ingress: "INGRESS_TRAFFIC_ALL",
+  ingress: "INGRESS_TRAFFIC_INTERNAL_ONLY",
   deletionProtection: false,
   template: {
     annotations: {
