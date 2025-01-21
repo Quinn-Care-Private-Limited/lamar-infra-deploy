@@ -1,13 +1,12 @@
 import * as aws from "@pulumi/aws";
 import { vpc, publicSubnet2 } from "../vpc";
-import { efs, lambdaAccessPoint, mountTarget2 } from "../efs";
+import { lambdaAccessPoint, mountTarget2 } from "../efs";
 import * as pulumi from "@pulumi/pulumi";
 import * as fs from "fs";
 import * as childProcess from "child_process";
 
-const lambdaName = "ffmpeg";
+const lambdaName = "storage";
 const lamarConfig = new pulumi.Config("lamar");
-const layerArn = lamarConfig.require("layer_arn");
 const workerVersion = lamarConfig.require("worker_version");
 
 const lambdaZipUrl = `https://storage.googleapis.com/lamar-infra-assets/worker-lambda/${workerVersion}/${lambdaName}.zip`;
@@ -63,7 +62,6 @@ export const lambdaFunction = new aws.lambda.Function(
     code: new pulumi.asset.FileArchive(lambdaZipPath),
     role: lambdaRole.arn,
     handler: `${lambdaName}.handler`,
-    layers: [layerArn],
     fileSystemConfig: {
       arn: lambdaAccessPoint.arn,
       localMountPath: "/mnt/efs",

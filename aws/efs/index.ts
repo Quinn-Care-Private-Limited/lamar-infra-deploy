@@ -54,7 +54,7 @@ export const lambdaAccessPoint = new aws.efs.AccessPoint(
   {
     fileSystemId: efs.id,
     rootDirectory: {
-      path: "/",
+      path: "/efs",
       creationInfo: {
         ownerGid: 1000,
         ownerUid: 1000,

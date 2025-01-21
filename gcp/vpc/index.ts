@@ -5,6 +5,9 @@ import * as pulumi from "@pulumi/pulumi";
 const config = new pulumi.Config();
 const region = config.require("region");
 
+const lamarConfig = new pulumi.Config("lamar");
+const sourceRanges = lamarConfig.require("source_ranges");
+
 // Step 1: Create a VPC Network
 export const vpcNetwork = new gcp.compute.Network("lamar-vpc", {
   autoCreateSubnetworks: false, // Disable auto subnet creation
@@ -34,7 +37,7 @@ export const firewallAllowHttp = new gcp.compute.Firewall(
         ports: ["80"],
       },
     ],
-    sourceRanges: ["0.0.0.0/0"],
+    sourceRanges: [sourceRanges],
     targetTags: ["http-server"],
   }
 );

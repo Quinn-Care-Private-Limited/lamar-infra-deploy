@@ -4,7 +4,7 @@ import { dbUrl } from "../db";
 import { ffmpegWorkerServiceUrl } from "../cloudrun/ffmpeg-worker";
 import { storageWorkerServiceUrl } from "../cloudrun/storage-worker";
 import { filesWorkerServiceUrl } from "../cloudrun/files-worker";
-import { subnetwork1 } from "../vpc";
+import { subnetwork1, vpcNetwork } from "../vpc";
 
 const gcpConfig = new pulumi.Config("gcp");
 const region = gcpConfig.require("region");
@@ -94,6 +94,7 @@ export const instance = new gcp.compute.Instance(
         ],
         queueCount: 0,
         stackType: "IPV4_ONLY",
+        network: vpcNetwork.id,
         subnetwork: subnetwork1.id,
       },
     ],

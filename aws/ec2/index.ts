@@ -2,15 +2,21 @@ import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import { publicSubnet1, vpc } from "../vpc";
 import { dbUrl } from "../db";
+import { ffmpegWorkerArn, filesWorkerArn, storageWorkerArn } from "../lambda";
+
+const config = new pulumi.Config();
+const region = config.require("region");
 
 const lamarConfig = new pulumi.Config("lamar");
+const sourceRanges = lamarConfig.require("source_ranges");
 const videoCsmServerUrl = lamarConfig.get("video_csm_server_url") || "";
-const videoCsmServerSecret = lamarConfig.get("video_csm_server_secret") || "";
 const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
 const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
 const lamarCoreVersion = lamarConfig.require("lamar_core_version");
 const sshKeyName = lamarConfig.require("ssh_key_name");
+const awsAccessKeyId = lamarConfig.require("aws_access_key_id");
+const awsSecretKey = lamarConfig.require("aws_secret_access_key");
 
 // Allocate an Elastic IP
 export const elasticIp = new aws.ec2.Eip("ec2-elastic-ip", {
@@ -28,14 +34,19 @@ curl -O https://storage.googleapis.com/lamar-infra-assets/lamar-core/prisma-bina
 chmod +x lamar-core
 
 screen -dmS lamar-job bash -c \
-"export \
-LAMAR_PUBLIC_KEY=${lamarPublicKey} \
-HOST=http://${elasticIp.publicIp} \
-VIDEO_CSM_SERVER_URL=${videoCsmServerUrl} \
-VIDEO_CSM_SERVER_SECRET=${videoCsmServerSecret} \
+"HOST='http://${elasticIp.publicIp}' \
+CLOUD_TYPE=aws \
+VIDEO_CSM_SERVER_URL='${videoCsmServerUrl}' \
 MAX_ASSET_PROCESSES=${maxAssetProcesses} \
 MAX_VIDEO_PROCESSES=${maxVideoProcesses} \
-DATABASE_URL='${dbUrl}'; \ 
+FFMPEG_WORKER_URL='${ffmpegWorkerArn}' \
+FILES_WORKER_URL='${filesWorkerArn}' \
+STORAGE_WORKER_URL='${storageWorkerArn}' \
+LAMAR_PUBLIC_KEY=${lamarPublicKey} \
+AWS_ACCESS_KEY_ID=${awsAccessKeyId} \
+AWS_SECRET_ACCESS_KEY=${awsSecretKey} \
+AWS_REGION=${region} \
+DATABASE_URL='${dbUrl}' \ 
 ./lamar-core"
 `;
 
@@ -54,7 +65,7 @@ const ec2SecurityGroup = new aws.ec2.SecurityGroup("ec2-security-group", {
       protocol: "tcp",
       fromPort: 80, // HTTP
       toPort: 80,
-      cidrBlocks: ["0.0.0.0/0"], // Allow HTTP traffic from anywhere
+      cidrBlocks: [sourceRanges], // Allow HTTP traffic from anywhere
     },
   ],
   egress: [

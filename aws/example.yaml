@@ -1,13 +1,14 @@
 config:
   aws:region: us-east-2
+  lamar:source_ranges: 0.0.0.0/0
   lamar:aws_access_key_id: AKIA1234567890
   lamar:aws_secret_access_key: 1234567890
   lamar:db_password: Test123
   lamar:video_csm_server_url: http://urserverurl
-  lamar:video_csm_server_secret: secret
   lamar:max_asset_processes: 1000
   lamar:max_video_processes: 1000
   lamar:lamar_public_key: publickey
   lamar:layer_arn: arn:aws:lambda:us-east-2:079464146245:layer:ffmpeg-vmaf:13
-  lamar:lamar_core_version: 0.0.1
+  lamar:worker_version: 0.0.1
+  lamar:lamar_core_version: 0.0.2
   lamar:ssh_key_name: test
