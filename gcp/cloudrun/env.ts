@@ -10,6 +10,6 @@ export const region = gcpConfig.require("region");
 export const env = [
   { name: "NODE_ENV", value: "production" },
   { name: "FS_PATH", value: "/mnt/efs" },
-  { name: "CLOUD_STORAGE", value: "GCS" },
+  { name: "CLOUD_STORAGE_TYPE", value: "GCS" },
   { name: "GCP_CREDENTIALS", value: gcpCredentials },
 ];
