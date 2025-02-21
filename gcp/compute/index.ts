@@ -4,6 +4,7 @@ import { dbUrl } from "../db";
 import { ffmpegWorkerServiceUrl } from "../cloudrun/ffmpeg-worker";
 import { storageWorkerServiceUrl } from "../cloudrun/storage-worker";
 import { filesWorkerServiceUrl } from "../cloudrun/files-worker";
+import { canvasWorkerServiceUrl } from "../cloudrun/canvas-worker";
 import { subnetwork1, vpcNetwork } from "../vpc";
 
 const gcpConfig = new pulumi.Config("gcp");
@@ -46,6 +47,8 @@ const containerDeclaration = pulumi.interpolate`spec:
       value: ${storageWorkerServiceUrl}
     - name: FILES_WORKER_URL
       value: ${filesWorkerServiceUrl}
+    - name: CANVAS_WORKER_URL
+      value: ${canvasWorkerServiceUrl}
     securityContext:
       privileged: true
     stdin: false
