@@ -65,6 +65,7 @@ export const lambdaFunction = new aws.lambda.Function(
     handler: `${lambdaName}.handler`,
     layers: [layerArn],
     memorySize: 10240,
+    timeout: 900,
     fileSystemConfig: {
       arn: lambdaAccessPoint.arn,
       localMountPath: "/mnt/efs",
