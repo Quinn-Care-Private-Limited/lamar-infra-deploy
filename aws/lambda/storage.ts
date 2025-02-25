@@ -62,6 +62,7 @@ export const lambdaFunction = new aws.lambda.Function(
     code: new pulumi.asset.FileArchive(lambdaZipPath),
     role: lambdaRole.arn,
     handler: `${lambdaName}.handler`,
+    memorySize: 2048,
     fileSystemConfig: {
       arn: lambdaAccessPoint.arn,
       localMountPath: "/mnt/efs",
