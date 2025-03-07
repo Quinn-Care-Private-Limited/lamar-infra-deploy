@@ -37,6 +37,7 @@ model Asset {
     sources    Source[]
     config     Json
     data       Json?
+    webhook    Json?
     status     AssetStatus @default(PENDING)
     deleted    Boolean     @default(false)
     VideoAsset VideoAsset?
@@ -106,6 +107,7 @@ model ProcessChunk {
     chunknumber Int
     inputpaths  Json
     process     Json
+    vfi         Int?
     assPath     String?
     duration    Float
 
