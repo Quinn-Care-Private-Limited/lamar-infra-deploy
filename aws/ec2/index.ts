@@ -12,6 +12,8 @@ const sourceRanges = lamarConfig.require("source_ranges");
 const videoCsmServerUrl = lamarConfig.get("video_csm_server_url") || "";
 const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
 const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
+const maxCanvasProcesses =
+  lamarConfig.getNumber("max_canvas_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
 const lamarCoreVersion = lamarConfig.require("lamar_core_version");
 const sshKeyName = lamarConfig.require("ssh_key_name");
@@ -39,6 +41,7 @@ export CLOUD_TYPE=aws && \
 export VIDEO_CSM_SERVER_URL='${videoCsmServerUrl}' && \
 export MAX_ASSET_PROCESSES=${maxAssetProcesses} && \
 export MAX_VIDEO_PROCESSES=${maxVideoProcesses} && \
+export MAX_CANVAS_PROCESSES=${maxCanvasProcesses} && \
 export FFMPEG_WORKER_URL='${ffmpegWorkerArn}' && \
 export FILES_WORKER_URL='${filesWorkerArn}' && \
 export STORAGE_WORKER_URL='${storageWorkerArn}' && \

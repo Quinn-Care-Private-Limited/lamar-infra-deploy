@@ -15,6 +15,8 @@ const dockerImage = lamarConfig.require("core_docker_image");
 const videoCsmServerUrl = lamarConfig.get("video_csm_server_url") || "";
 const maxAssetProcesses = lamarConfig.getNumber("max_asset_processes") || 1000;
 const maxVideoProcesses = lamarConfig.getNumber("max_video_processes") || 1000;
+const maxCanvasProcesses =
+  lamarConfig.getNumber("max_canvas_processes") || 1000;
 const lamarPublicKey = lamarConfig.require("lamar_public_key");
 
 // Reserve a static IP address
@@ -39,6 +41,8 @@ const containerDeclaration = pulumi.interpolate`spec:
       value: ${maxAssetProcesses}
     - name: MAX_VIDEO_PROCESSES
       value: ${maxVideoProcesses}
+    - name: MAX_CANVAS_PROCESSES
+      value: ${maxCanvasProcesses}
     - name: LAMAR_PUBLIC_KEY
       value: ${lamarPublicKey}  
     - name: FFMPEG_WORKER_URL
